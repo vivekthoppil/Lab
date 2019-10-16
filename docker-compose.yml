@@ -1,0 +1,42 @@
+version: '3.3'
+
+services: 
+  web:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes: 
+      - ./backend/:/usr/src/backend/
+    ports: 
+      - 8001:8000
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=foo
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=test_db
+      - SQL_USER=user123
+      - SQL_PASSWORD=user123
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE=postgres
+    networks: 
+      - djangovue
+    depends_on: 
+      - db
+  db:
+    image: postgres:11.5-alpine
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=user123
+      - POSTGRES_PASSWORD=user123
+      - POSTGRES_DB=test_db
+    networks: 
+      - djangovue
+
+networks: 
+  djangovue:
+
+volumes: 
+  postgres_data:

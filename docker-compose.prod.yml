@@ -1,0 +1,46 @@
+version: '3.3'
+
+services:
+  web:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: backend_api
+    command: gunicorn api.wsgi:application --bind 0.0.0.0:8000
+    expose: 
+      - 8000
+    env_file: .env
+    depends_on:
+      - db
+    networks: 
+      - djangovue
+    volumes:
+      - static_files:/usr/src/backend/api/staticfiles
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_proxy
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+    networks: 
+      - djangovue
+    volumes:
+      - static_files:/usr/src/backend/api/staticfiles
+
+  db:
+    image: postgres:11.5-alpine
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file: .env.db
+    networks: 
+      - djangovue
+
+networks: 
+  djangovue:
+
+volumes:
+  postgres_data:
+  static_files:
