@@ -17,15 +17,15 @@ class RegistrationController(BaseController):
     serializer_class = RegistrationSerializer
 
     @swagger_auto_schema(
-            request_body=UserRequestSchema,
-            responses={
-                '200': UserResponseSchema,
-                '400': "Bad Request"
-            },
-            security=[],
-            operation_id='Register User',
-            operation_description='To register new user.'
-        )
+        request_body=UserRequestSchema,
+        responses={
+            '200': UserResponseSchema,
+            '400': "Bad Request"
+        },
+        security=[],
+        operation_id='Register User',
+        operation_description='To register new user.'
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data.get('user'))
         serializer.is_valid(raise_exception=True)

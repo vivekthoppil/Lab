@@ -8,3 +8,4 @@ __pycache
 .vscode/
 Pipfile
 Pipfile.lock
+db.sqlite3
