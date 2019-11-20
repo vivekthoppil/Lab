@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     'api.apps.authentication',
     'api.apps.suite',
 ]
@@ -135,3 +136,13 @@ REST_FRAMEWORK = {
 }
 
 JWT_TOKEN_TIME_PERIOD_IN_SECONDS = 86400
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'api_key': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
