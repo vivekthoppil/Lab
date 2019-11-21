@@ -39,7 +39,7 @@ class RegistrationController(BaseController):
             'email': user.email,
             'token': token
         }
-        return Response(data=resp, status=status.HTTP_202_ACCEPTED)
+        return Response(data=resp, status=status.HTTP_201_CREATED)
 
 
 class LoginController(BaseController):

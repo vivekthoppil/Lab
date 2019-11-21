@@ -9,7 +9,7 @@ from .services import create_user_token
 class RegistrationSerializer(serializers.Serializer):
 
     username = serializers.CharField(max_length=255, allow_blank=False)
-    email = serializers.CharField(max_length=255, allow_blank=False)
+    email = serializers.EmailField(max_length=255, allow_blank=False)
     password = serializers.CharField(
         max_length=128,
         min_length=8,
