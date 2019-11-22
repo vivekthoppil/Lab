@@ -19,8 +19,9 @@ class RegistrationController(BaseController):
     @swagger_auto_schema(
         request_body=UserRequestSchema,
         responses={
-            '200': UserResponseSchema,
-            '400': "Bad Request"
+            '201': UserResponseSchema,
+            '400': "Bad Request",
+            '409': 'Conflict'
         },
         security=[],
         operation_id='Register User',

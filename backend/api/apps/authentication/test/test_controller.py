@@ -144,7 +144,7 @@ class TestRegistrationController(APITestCase):
             ),
             content_type='application/json'
         )
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(409, response.status_code)
         self.assertTrue('errors' in response.data)
-        ed = response.data['errors'][0]
+        ed = response.data['errors']['detail']
         self.assertEqual(ed.lower(), 'user already exists')

@@ -1,5 +1,9 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist,
+                                    ValidationError)
 from rest_framework import exceptions as rest_exceptions
+
+from .exceptions import (AmbiguousResultsException, InvalidParameter,
+                         ObjectAlreadyExists, ResourceConflict)
 
 
 def get_first_matching_attr(obj, *attrs, default=None):
@@ -24,6 +28,27 @@ def get_error_message(exc):
     return error_msg
 
 
+core_exception_to_drf_exception_mapper = {
+    ObjectAlreadyExists: ResourceConflict,
+    AmbiguousResultsException: InvalidParameter,
+    ImproperlyConfigured: InvalidParameter,
+    ObjectDoesNotExist: InvalidParameter,
+    ValidationError: rest_exceptions.ValidationError,
+    PermissionError: rest_exceptions.PermissionDenied,
+    ValueError: InvalidParameter,
+}
+
+
+def convert_to_api_exception(exc):
+    if isinstance(exc, rest_exceptions.APIException):
+        return exc
+
+    api_exc_class = core_exception_to_drf_exception_mapper.get(
+        exc.__class__, rest_exceptions.APIException)
+    api_exc = api_exc_class(get_error_message(exc))
+    return api_exc
+
+
 class ExceptionHandlerMixin:
     """
     Mixin that transforms Django and Python exceptions into DRF ones.
@@ -35,14 +60,11 @@ class ExceptionHandlerMixin:
     }
 
     def handle_exception(self, exc):
-        if isinstance(exc, tuple(self.expected_exceptions.keys())):
-            drf_exception_class = self.expected_exceptions[exc.__class__]
-            exc = drf_exception_class(get_error_message(exc))
+        api_exc = convert_to_api_exception(exc)
+        response = super().handle_exception(api_exc)
 
-        response = super().handle_exception(exc)
-
-        if not response:
-            return None
+        # if not response:
+        #     return None
 
         response.data = {
             'errors': response.data

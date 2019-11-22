@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
 from .models import RiskType
 
@@ -24,9 +24,9 @@ def get_all_risk_types(include_deleted=False):
 
 def get_risk_type(risk_type_id):
     if not risk_type_id:
-        raise ValidationError('Invalid Risk Type Identifier')
+        raise ImproperlyConfigured('Invalid Risk Type Identifier')
     try:
         risk_type = RiskType.objects.get(id=risk_type_id)
     except RiskType.DoesNotExist:
-        raise ValidationError('No Risk Type found')
+        raise ObjectDoesNotExist('Requested Risk Type not found')
     return risk_type

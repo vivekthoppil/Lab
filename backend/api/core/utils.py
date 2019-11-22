@@ -10,7 +10,8 @@ def now():
 
 
 def generate_jwt_token(user_info):
-    token_expiration_time = now() + timedelta(seconds=int(settings.JWT_TOKEN_TIME_PERIOD_IN_SECONDS))
+    token_expiration_time = now(
+    ) + timedelta(seconds=int(settings.JWT_TOKEN_TIME_PERIOD_IN_SECONDS))
     jwt_payload = {
         'exp': token_expiration_time
     }

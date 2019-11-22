@@ -1,6 +1,7 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import IntegrityError
 
+from api.core.exceptions import AmbiguousResultsException, ObjectAlreadyExists
 from api.core.utils import generate_jwt_token
 
 from .models import User
@@ -8,12 +9,12 @@ from .models import User
 
 def create_user(username, password, email, **kwargs):
     if not all([username, password, email]):
-        raise ValidationError('Must provide username, password\
-                              and email for user')
+        raise ImproperlyConfigured('Must provide username, password\
+                                   and email for user')
     try:
         user = User.objects.create_user(username, email, password, **kwargs)
     except IntegrityError:
-        raise ValidationError('User already exists')
+        raise ObjectAlreadyExists('User already exists')
     return user
 
 
@@ -21,9 +22,10 @@ def create_user_token(email, password):
     try:
         user = User.objects.get(email=email, password=password)
     except User.DoesNotExist:
-        raise ValidationError('No user found')
+        raise ObjectDoesNotExist('No user found')
     except User.MultipleObjectsReturned:
-        raise ValidationError('Multiple users found with the same credentials')
+        raise AmbiguousResultsException('Multiple users found with the same \
+                                        credentials')
 
     user_info = {
         'email': user.email,
