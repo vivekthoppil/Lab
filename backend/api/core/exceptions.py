@@ -7,7 +7,7 @@ class ObjectAlreadyExists(Exception):
     pass
 
 
-class AmbiguousResultsException(Exception):
+class AmbiguityException(Exception):
     """Multiple results returned while expecting single."""
     pass
 

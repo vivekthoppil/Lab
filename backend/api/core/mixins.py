@@ -2,7 +2,7 @@ from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist,
                                     ValidationError)
 from rest_framework import exceptions as rest_exceptions
 
-from .exceptions import (AmbiguousResultsException, InvalidParameter,
+from .exceptions import (AmbiguityException, InvalidParameter,
                          ObjectAlreadyExists, ResourceConflict)
 
 
@@ -30,7 +30,7 @@ def get_error_message(exc):
 
 core_exception_to_drf_exception_mapper = {
     ObjectAlreadyExists: ResourceConflict,
-    AmbiguousResultsException: InvalidParameter,
+    AmbiguityException: InvalidParameter,
     ImproperlyConfigured: InvalidParameter,
     ObjectDoesNotExist: InvalidParameter,
     ValidationError: rest_exceptions.ValidationError,

@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import IntegrityError
 
-from api.core.exceptions import AmbiguousResultsException, ObjectAlreadyExists
+from api.core.exceptions import AmbiguityException, ObjectAlreadyExists
 from api.core.utils import generate_jwt_token
 
 from .models import User
@@ -24,7 +24,7 @@ def create_user_token(email, password):
     except User.DoesNotExist:
         raise ObjectDoesNotExist('No user found')
     except User.MultipleObjectsReturned:
-        raise AmbiguousResultsException('Multiple users found with the same \
+        raise AmbiguityException('Multiple users found with the same \
                                         credentials')
 
     user_info = {
