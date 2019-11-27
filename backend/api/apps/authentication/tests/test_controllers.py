@@ -8,9 +8,6 @@ from api.apps.authentication.models import User
 
 class TestRegistrationController(APITestCase):
 
-    def setUp(self):
-        pass
-
     def test_user_registration_success(self):
         response = self.client.post(
             reverse('authentication:user-registration'),
@@ -26,6 +23,9 @@ class TestRegistrationController(APITestCase):
             content_type='application/json'
         )
         self.assertEqual(201, response.status_code)
+        self.assertIsNotNone(response.data.get('username'))
+        self.assertIsNotNone(response.data.get('email'))
+        self.assertIsNotNone(response.data.get('token'))
 
     def test_malformed_request_data_unsuccesful(self):
         response = self.client.post(
@@ -148,3 +148,95 @@ class TestRegistrationController(APITestCase):
         self.assertTrue('errors' in response.data)
         ed = response.data['errors']['detail']
         self.assertEqual(ed.lower(), 'user already exists')
+
+
+class TestLoginController(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('johndoe', 'johndoe@gmail.com',
+                                             '12345678')
+
+    def test_invalid_credential_login(self):
+        self.user.delete()
+        response = self.client.post(
+            reverse('authentication:user-login'),
+            json.dumps(
+                {
+                    'user': {
+                        'password': '12345678',
+                        'email': 'johndoe@gmail.com'
+                    }
+                }
+            ),
+            content_type='application/json'
+        )
+        self.assertEqual(403, response.status_code)
+
+    def test_login_sucess(self):
+        response = self.client.post(
+            reverse('authentication:user-login'),
+            json.dumps(
+                {
+                    'user': {
+                        'password': '12345678',
+                        'email': 'johndoe@gmail.com'
+                    }
+                }
+            ),
+            content_type='application/json'
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertIsNotNone(response.data.get('username'))
+        self.assertIsNotNone(response.data.get('email'))
+        self.assertIsNotNone(response.data.get('token'))
+
+    def test_malformed_request_data_unsuccesful(self):
+        response = self.client.post(
+            reverse('authentication:user-login'),
+            json.dumps(
+                {
+                    'password': '12345678',
+                    'email': 'johndoe@gmail.com'
+
+                }
+            ),
+            content_type='application/json'
+        )
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('errors' in response.data)
+
+    def test_no_email_provided(self):
+        response = self.client.post(
+            reverse('authentication:user-login'),
+            json.dumps(
+                {
+                    'user': {
+                        'password': '12345678',
+                    }
+                }
+            ),
+            content_type='application/json'
+        )
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('errors' in response.data)
+        self.assertTrue('email' in response.data['errors'])
+        ed = response.data['errors']['email'][0]
+        self.assertEqual(ed.lower(), 'this field is required.')
+
+    def test_no_password_provided(self):
+        response = self.client.post(
+            reverse('authentication:user-login'),
+            json.dumps(
+                {
+                    'user': {
+                        'email': 'johndoe@mail.com'
+                    }
+                }
+            ),
+            content_type='application/json'
+        )
+        self.assertEqual(400, response.status_code)
+        self.assertTrue('errors' in response.data)
+        self.assertTrue('password' in response.data['errors'])
+        ed = response.data['errors']['password'][0]
+        self.assertEqual(ed.lower(), 'this field is required.')
