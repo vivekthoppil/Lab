@@ -10,6 +10,9 @@ from .services import get_all_risk_types, get_risk_type
 
 
 class RiskTypeListController(GenericListController):
+    """To list all valid risk types.
+
+    """
     permission_classes = (IsAuthenticated,)
     renderer_classes = (RiskTypeRenderer,)
     pagination_class = BasicPagination
@@ -21,6 +24,9 @@ class RiskTypeListController(GenericListController):
 
 
 class RiskTypeDetailController(GenericRetrieveController):
+    """To retrieve the details of a risk type.
+
+    """
     permission_classes = (IsAuthenticated,)
     renderer_classes = (RiskTypeRenderer,)
     serializer_class = RiskTypeDetailSerializer
