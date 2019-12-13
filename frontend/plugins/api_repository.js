@@ -1,5 +1,8 @@
-import createRepository from '@/common/api.service'
+import { authApiRepository, createApiRepository } from '@/common/api.service'
 export default (ctx, inject) => {
-  const repositoryWithAxios = createRepository(ctx.$axios)
+  const repositoryWithAxios = createApiRepository(ctx.$axios)
   inject('apiService', repositoryWithAxios)
+
+  const authServiceInitialized = authApiRepository(repositoryWithAxios)
+  inject('authService', authServiceInitialized)
 }

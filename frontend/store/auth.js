@@ -19,10 +19,9 @@ export const getters = {
 
 export const actions = {
   [LOGIN](context, credentials) {
-    const service = this.$apiService
-    return new Promise((resolve) => {
-      service
-        .post('/authentication/users/login/', credentials)
+    const serviceCall = (resolve) => {
+      this.$authService
+        .login(credentials)
         .then(({ data }) => {
           context.commit(SET_AUTH, data.user)
           resolve(data)
@@ -30,16 +29,17 @@ export const actions = {
         .catch(({ response }) => {
           context.commit(SET_ERROR, response.data.errors)
         })
-    })
+    }
+    return new Promise(serviceCall)
   },
   [LOGOUT](context) {
     context.commit(PURGE_AUTH)
   },
   [REGISTER](context, credentials) {
-    const service = this.$apiService
+    const service = this.$authService
     return new Promise((resolve, reject) => {
       service
-        .post('/authentication/users', credentials)
+        .login(credentials)
         .then(({ data }) => {
           context.commit(SET_AUTH, data.user)
           resolve(data)
@@ -53,8 +53,9 @@ export const actions = {
 }
 
 export const mutations = {
-  [SET_ERROR](state, error) {
-    state.errors = error
+  [SET_ERROR](state, errorObj) {
+    const errors = this.$formatApiErrorMessages(errorObj)
+    state.errors = errors
   },
   [SET_AUTH](state, user) {
     state.isAuthenticated = true

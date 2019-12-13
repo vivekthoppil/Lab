@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { mapMutations, createNamespacedHelpers } from 'vuex'
 import { LOGIN } from '@/store/actions.type'
 const { mapState, mapActions } = createNamespacedHelpers('auth')
 
@@ -61,15 +61,16 @@ export default {
   },
   methods: {
     ...mapActions([LOGIN]),
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
     onSignIn() {
       if (!this.$refs.form.validate()) {
         return
       }
       this.login({
-        user: {
-          email: this.email,
-          password: this.password
-        }
+        email: this.email,
+        password: this.password
       }).then(() => this.$router.push('/inspire'))
     }
   }
