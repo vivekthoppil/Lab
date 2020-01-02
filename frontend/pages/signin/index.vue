@@ -2,7 +2,7 @@
   <v-container>
     <v-layout row>
       <v-flex md6>
-        <v-subheader class="lime accent-4" light><h1>Sign In</h1></v-subheader>
+        <v-subheader class="blue lighten-4" light><h1>Sign In</h1></v-subheader>
         <v-spacer />
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
@@ -18,7 +18,6 @@
             label="Password"
             required
           ></v-text-field>
-
           <v-btn
             :disabled="!valid"
             @click="onSignIn"
@@ -38,11 +37,12 @@
 </template>
 
 <script>
-import { mapMutations, createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import { LOGIN } from '@/store/actions.type'
-const { mapState, mapActions } = createNamespacedHelpers('auth')
+const { mapActions } = createNamespacedHelpers('auth')
 
 export default {
+  middleware: 'anonymous',
   data: () => ({
     valid: true,
     passwordRules: [(v) => !!v || 'Password is required'],
@@ -51,19 +51,11 @@ export default {
       (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'
     ],
 
-    password: 'vvvvvvvvv',
-    email: 'test@gg.com'
+    password: null,
+    email: null
   }),
-  computed: {
-    ...mapState({
-      errors: (state) => state.auth.errors
-    })
-  },
   methods: {
     ...mapActions([LOGIN]),
-    ...mapMutations({
-      setSnack: 'snackbar/setSnack'
-    }),
     onSignIn() {
       if (!this.$refs.form.validate()) {
         return
@@ -71,7 +63,14 @@ export default {
       this.login({
         email: this.email,
         password: this.password
-      }).then(() => this.$router.push('/inspire'))
+      })
+        .then(() => this.$router.push('/'))
+        .catch((response) => {
+          this.$notifier.showMessage({
+            content: response.data.errors.detail,
+            color: 'error'
+          })
+        })
     }
   }
 }

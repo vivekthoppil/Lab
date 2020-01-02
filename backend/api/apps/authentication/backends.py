@@ -7,7 +7,7 @@ from .models import User
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
-    authentication_header_prefix = 'Token'
+    authentication_header_prefix = 'Bearer'
 
     def authenticate(self, request):
         request.user = None
@@ -62,3 +62,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return (user, token)
+
+    def authenticate_header(self, request):
+        return 'Bearer realm="To access the suite API"'

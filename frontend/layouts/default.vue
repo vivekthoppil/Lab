@@ -38,9 +38,8 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <!-- <v-btn @click.stop="rightDrawer = !rightDrawer" icon>
-        <v-icon>mdi-menu</v-icon>
-      </v-btn> -->
+      <span v-if="isAuthenticated">Welcome {{ user }}, </span>
+      <v-btn v-if="isAuthenticated" @click="signout" small>Sign out</v-btn>
     </v-app-bar>
     <v-content>
       <v-container>
@@ -66,7 +65,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import Snackbar from '~/components/Snackbar'
+import { LOGOUT } from '~/store/actions.type'
+const { mapState, mapActions } = createNamespacedHelpers('auth')
 export default {
   components: {
     Snackbar
@@ -84,14 +86,28 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          title: 'Risk Types',
+          to: '/risktypes'
         }
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'INSURANCE SUITE'
+    }
+  },
+  computed: {
+    ...mapState({
+      isAuthenticated: (state) => state.isAuthenticated,
+      user: (state) => state.user
+    })
+  },
+  methods: {
+    ...mapActions([LOGOUT]),
+    signout() {
+      this.logout().then(() => {
+        this.$router.push('/signin')
+      })
     }
   }
 }

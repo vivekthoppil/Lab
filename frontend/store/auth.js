@@ -1,11 +1,10 @@
 import { SET_AUTH, PURGE_AUTH, SET_ERROR } from './mutations.type'
 import { LOGIN, LOGOUT, REGISTER } from './actions.type'
-import JwtService from '@/common/jwt.service'
+import UserAuthService from '~/common/user_auth.details'
 
 export const state = () => ({
-  errors: null,
-  user: {},
-  isAuthenticated: !!JwtService.getToken()
+  user: UserAuthService.getUsername(),
+  isAuthenticated: !!UserAuthService.getToken()
 })
 
 export const getters = {
@@ -19,7 +18,7 @@ export const getters = {
 
 export const actions = {
   [LOGIN](context, credentials) {
-    const serviceCall = (resolve) => {
+    const serviceCall = (resolve, reject) => {
       this.$authService
         .login(credentials)
         .then(({ data }) => {
@@ -27,7 +26,7 @@ export const actions = {
           resolve(data)
         })
         .catch(({ response }) => {
-          context.commit(SET_ERROR, response.data.errors)
+          reject(response)
         })
     }
     return new Promise(serviceCall)
@@ -36,19 +35,18 @@ export const actions = {
     context.commit(PURGE_AUTH)
   },
   [REGISTER](context, credentials) {
-    const service = this.$authService
-    return new Promise((resolve, reject) => {
-      service
-        .login(credentials)
+    const serviceCall = (resolve, reject) => {
+      this.$authService
+        .register(credentials)
         .then(({ data }) => {
           context.commit(SET_AUTH, data.user)
           resolve(data)
         })
         .catch(({ response }) => {
-          context.commit(SET_ERROR, response.data.errors)
           reject(response)
         })
-    })
+    }
+    return new Promise(serviceCall)
   }
 }
 
@@ -59,14 +57,14 @@ export const mutations = {
   },
   [SET_AUTH](state, user) {
     state.isAuthenticated = true
-    state.user = user
-    state.errors = {}
-    JwtService.saveToken(state.user.token)
+    state.user = user.username
+    UserAuthService.saveUsername(user.username)
+    UserAuthService.saveToken(user.token)
   },
   [PURGE_AUTH](state) {
     state.isAuthenticated = false
-    state.user = {}
-    state.errors = {}
-    JwtService.destroyToken()
+    state.user = ''
+    UserAuthService.destroyUsername()
+    UserAuthService.destroyToken()
   }
 }

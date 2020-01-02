@@ -84,7 +84,7 @@ class RiskTypeListController(APITestCase):
     def test_risk_types_list(self):
         self.user_token = create_user_token(self.user.email,
                                             self.user.password)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:list-risk-types'),
             content_type='application/json'
@@ -97,7 +97,7 @@ class RiskTypeListController(APITestCase):
         self.user_token = create_user_token(self.user.email,
                                             self.user.password)
         time.sleep(2)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:list-risk-types'),
             content_type='application/json'
@@ -110,7 +110,7 @@ class RiskTypeListController(APITestCase):
 
     def test_token_format(self):
         self.user_token = 'abc'
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:list-risk-types'),
             content_type='application/json'
@@ -146,7 +146,7 @@ class RiskTypeDetailController(APITestCase):
     def test_risk_type_detail(self):
         self.user_token = create_user_token(self.user.email,
                                             self.user.password)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:risk-type-detail',
                     kwargs={'risk_type_id': self.risk_type_id}),
@@ -159,7 +159,7 @@ class RiskTypeDetailController(APITestCase):
         self.user_token = create_user_token(self.user.email,
                                             self.user.password)
         time.sleep(2)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:risk-type-detail',
                     kwargs={'risk_type_id': self.risk_type_id}),
@@ -173,7 +173,7 @@ class RiskTypeDetailController(APITestCase):
 
     def test_token_format(self):
         self.user_token = 'abc'
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_token)
         response = self.client.get(
             reverse('suite:risk-type-detail',
                     kwargs={'risk_type_id': self.risk_type_id}),

@@ -1,13 +1,13 @@
 export const createApiRepository = ($axios) => ({
   query(resource, params) {
     return $axios.get(resource, params).catch((error) => {
-      throw new Error(`[RWV] ApiService ${error}`)
+      throw new Error(`[Suite] ApiService ${error}`)
     })
   },
 
   get(resource, slug = '') {
     return $axios.get(`${resource}/${slug}`).catch((error) => {
-      throw new Error(`[RWV] ApiService ${error}`)
+      throw new Error(`[Suite] ApiService ${error}`)
     })
   },
 
@@ -25,7 +25,7 @@ export const createApiRepository = ($axios) => ({
 
   delete(resource) {
     return $axios.delete(resource).catch((error) => {
-      throw new Error(`[RWV] ApiService ${error}`)
+      throw new Error(`[Suite] ApiService ${error}`)
     })
   }
 })
@@ -35,5 +35,22 @@ export const authApiRepository = (genericApiService) => ({
     return genericApiService.post('/authentication/users/login/', {
       user: { email, password }
     })
+  },
+  register({ email, password, username }) {
+    return genericApiService.post('/authentication/users/', {
+      user: { email, password, username }
+    })
+  }
+})
+
+export const riskTypeRepository = (genericApiService) => ({
+  listRiskTypes(page) {
+    page = page || 1
+    return genericApiService.query('/suite/risk_types', {
+      params: { page }
+    })
+  },
+  retrieveRiskType(id) {
+    return genericApiService.get('/suite/risk_types', id)
   }
 })

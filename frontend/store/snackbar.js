@@ -1,9 +1,13 @@
 export const state = () => ({
-  snack: ''
+  content: '',
+  color: '',
+  timeout: ''
 })
 
 export const mutations = {
-  setSnack(state, snack) {
-    state.snack = snack
+  showMessage(state, payload) {
+    state.content = payload.content
+    state.color = payload.color
+    state.timeout = payload.timeout
   }
 }
