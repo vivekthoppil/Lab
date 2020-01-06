@@ -42,7 +42,7 @@ RUN addgroup -S app && adduser -S app -G app
 
 # create the appropriate directories
 ENV HOME=/home/app
-ENV APP_HOME=/home/app/backend
+ENV APP_HOME=/home/app/suite
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/api
 RUN mkdir $APP_HOME/api/staticfiles
@@ -68,4 +68,4 @@ RUN chown -R app:app $APP_HOME
 USER app
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/app/backend/entrypoint.prod.sh"]
+ENTRYPOINT ["/home/app/suite/entrypoint.prod.sh"]

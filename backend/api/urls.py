@@ -37,6 +37,6 @@ urlpatterns = [
     path('api/v1/authentication/', include('api.apps.authentication.urls')),
     path('api/v1/suite/', include('api.apps.suite.urls',
                                   namespace='v1')),
-    path('apidocs', schema_view.with_ui('swagger', cache_timeout=0),
+    path('', schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
 ]
