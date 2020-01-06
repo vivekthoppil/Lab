@@ -1,11 +1,23 @@
 version: '3.3'
 
 services:
-  web:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: suite_frontend
+    restart: always
+    networks:
+      - insurance_suite
+    command:
+      "npm run start"
+
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
     container_name: suite_backend_api
+    restart: always
     command: gunicorn api.wsgi:application --bind 0.0.0.0:8000
     expose:
       - 8000
@@ -14,12 +26,13 @@ services:
     networks:
       - insurance_suite
     volumes:
-      - static_volume:/home/app/web/api/staticfiles
+      - static_volume:/home/app/backend/api/staticfiles
     depends_on:
       - db
   db:
     image: postgres:12.0-alpine
     container_name: suite_db
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -29,14 +42,15 @@ services:
 
   nginx:
     build: ./nginx
+    container_name: suite_nginx
     volumes:
-      - static_volume:/home/app/web/api/staticfiles
+      - static_volume:/home/app/backend/api/staticfiles
     ports:
       - 80:80
     networks:
       - insurance_suite
     depends_on:
-      - web
+      - backend
 
 networks:
   insurance_suite:
