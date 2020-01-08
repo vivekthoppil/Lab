@@ -1,8 +1,7 @@
+const PUBLIC_URLS = ['/signin','/signin/', '/signup', '/signup/']
+
 export default function(context) {
-  if (context.route.path === '/signin') {
-    return
-  }
-  if (context.route.path === '/signup') {
+  if (PUBLIC_URLS.includes(context.route.path)) {
     return
   }
   if (!context.store.getters['auth/isAuthenticated']) {
