@@ -5,10 +5,12 @@ services:
     build: ./frontend
     container_name: suite_frontend_dev
     volumes:
-      - ./frontend:/usr/src/app/frontend/
+      - ./frontend:/usr/src/app/
     ports:
       - '3000:3000'
-    command: 'env HOST=0.0.0.0 npm run dev'
+    env_file:
+      - ./frontend/env/.env.dev
+    command: 'yarn dev'
 
   backend:
     build: ./backend
