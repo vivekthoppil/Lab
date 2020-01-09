@@ -11,6 +11,8 @@ COPY ./. /usr/src/app/
 
 RUN rm -f .env && mv .env.prod .env
 
+RUN npm install
+
 RUN npm run generate
 
 RUN cp -r dist/. /usr/share/nginx/html/suite_frontend/
